@@ -1,0 +1,14 @@
+--- source/core/NstVideoFilterNtsc.hpp.orig	2007-05-06 17:30:00.000000000 +0200
++++ source/core/NstVideoFilterNtsc.hpp	2007-05-06 17:31:21.000000000 +0200
+@@ -25,7 +25,10 @@
+ #ifndef NST_VIDEO_FILTER_NTSC_H
+ #define NST_VIDEO_FILTER_NTSC_H
+ 
+-#include "../nes_ntsc/nes_ntsc.h"
++extern "C"
++{
++#include <nes_ntsc.h>
++}
+ 
+ #ifdef NST_PRAGMA_ONCE
+ #pragma once
