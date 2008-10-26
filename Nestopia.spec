@@ -2,7 +2,7 @@
 %define pkgrelease %(echo %version|sed s/[^a-z]//g)
 
 Name: Nestopia
-Version: 1.40g
+Version: 1.40h
 Release: 1%{?dist}
 Summary: A portable open source NES/Famicom emulator       
 
@@ -108,6 +108,9 @@ fi
 %doc changelog.txt COPYING README.Linux readme.html
 
 %changelog
+* Sun Oct 25 2008 Andrea Musuruane <musuruan@gmail.com> 1.40h-1
+- updated to 1.40 release h
+
 * Tue Jul 15 2008 Andrea Musuruane <musuruan@gmail.com> 1.40g-1
 - updated to 1.40 release g
 
