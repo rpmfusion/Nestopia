@@ -3,7 +3,7 @@
 
 Name: Nestopia
 Version: 1.40h
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: A portable open source NES/Famicom emulator       
 
 Group: Applications/Emulators
@@ -101,13 +101,15 @@ fi
 %defattr(-,root,root)
 %{_bindir}/nst
 %{_bindir}/nestopia.sh
-%{_datadir}/%{name}/nstcontrols
-%{_datadir}/%{name}/NstDatabase.xml
+%{_datadir}/%{name}
 %{_datadir}/icons/hicolor/32x32/apps/%{name}.png
 %{_datadir}/applications/dribble-%{name}.desktop
 %doc changelog.txt COPYING README.Linux readme.html
 
 %changelog
+* Thu Dec 04 2008 Andrea Musuruane <musuruan@gmail.com> 1.40h-2
+- Fixed unowned directory (BZ #216)
+
 * Sun Oct 25 2008 Andrea Musuruane <musuruan@gmail.com> 1.40h-1
 - updated to 1.40 release h
 
