@@ -3,7 +3,7 @@
 
 Name: Nestopia
 Version: 1.40h
-Release: 6%{?dist}
+Release: 7%{?dist}
 Summary: A portable open source NES/Famicom emulator       
 
 Group: Applications/Emulators
@@ -107,6 +107,9 @@ fi
 %doc changelog.txt COPYING README.Linux readme.html
 
 %changelog
+* Sun Mar 03 2013 Nicolas Chauvet <kwizart@gmail.com> - 1.40h-7
+- Mass rebuilt for Fedora 19 Features
+
 * Wed Apr 04 2012 Nicolas Chauvet <kwizart@gmail.com> - 1.40h-6
 - Rebuilt
 
