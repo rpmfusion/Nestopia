@@ -1,30 +1,29 @@
-%define pkgversion %(echo %version|sed s/[a-z]//g|sed s/\\\\.//)
-%define pkgrelease %(echo %version|sed s/[^a-z]//g)
+%global realname nestopia
 
 Name: Nestopia
-Version: 1.40h
-Release: 7%{?dist}
+Version: 1.45
+Release: 1%{?dist}
 Summary: A portable open source NES/Famicom emulator       
 
-Group: Applications/Emulators
 License: GPLv2+
-URL: http://nestopia.sourceforge.net/
-Source0: http://dl.sf.net/sourceforge/nestopia/%{name}%{pkgversion}src.zip
-# Source1 is not downloadable without a valid browser user agent
-Source1: http://rbelmont.mameworld.info/nst%{pkgversion}_lnx_release_%{pkgrelease}.zip
-Source2: Nestopia.desktop
-Source3: nestopia.sh
-Patch0: Nestopia-1.40-fixmakefile.patch
-Patch1: Nestopia-1.36-nesntsc.patch
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+URL: http://0ldsk00l.ca/nestopia.html
+Source0: http://downloads.sourceforge.net/nestopiaue/%{version}/%{realname}-%{version}.tgz
+# Install to FHS-compliant locations and handle DESTDIR
+Patch0: %{name}-1.45-install-location.patch
+# Use a format specifier with gtk_message_dialog_new
+Patch1: %{name}-1.45-format-security.patch
+# Use system nes_ntsc
+Patch2: Nestopia-1.36-nesntsc.patch
 
-BuildRequires: gtk2-devel >= 2.4.0
+BuildRequires: gtk3-devel
 BuildRequires: SDL-devel >= 1.2.12
 BuildRequires: alsa-lib-devel
+BuildRequires: libarchive-devel
 BuildRequires: zlib-devel
+BuildRequires: mesa-libGL-devel
+BuildRequires: mesa-libGLU-devel
 BuildRequires: nes_ntsc-devel
 BuildRequires: pkgconfig
-BuildRequires: ImageMagick
 BuildRequires: desktop-file-utils
 Requires: hicolor-icon-theme
 
@@ -34,79 +33,48 @@ designed to be as accurate as possible and supports a large number of
 peripherals. The hardware is emulated at cycle-by-cycle granularity, ensuring 
 full support for software that do mid-scanline and other timing trickery. 
 
-Linux porting by R. Belmont.
-
 %prep
-%setup -q -c
-%setup -q -T -D -a 1
+%setup -q -n %{realname}-%{version}
 
 %patch0 -p1
-%patch1 -p0
+%patch1 -p1
+%patch2 -p0
 
 # Fix end-of-line encoding
 sed -i 's/\r//' changelog.txt
-sed -i 's/\r//' source/linux/7zip/*
 
-# Fix file permissions
-chmod 644 source/linux/7zip/*
-
-# Compile with system zlib
-sed -i 's/\"..\/zlib\/zlib.h\"/\<zlib.h\>/' source/core/NstZlib.cpp
+# Clean up sources
+rm -rf dll lib source/kaillera source/unrar
 
 %build
+export CFLAGS="%{optflags}"
+export CXXFLAGS="%{optflags}"
 # It does not compile with smp_mflags
-make RPMFLAGS="-c $RPM_OPT_FLAGS"
+make
 
 %install
-rm -rf %{buildroot}
+make install DESTDIR=%{buildroot}
 
-# Install main executable
-install -d %{buildroot}%{_bindir}
-install -m 755 nst %{buildroot}%{_bindir}
-
-# Install data files
-install -d %{buildroot}%{_datadir}/%{name}
-install -m 644 {nstcontrols,NstDatabase.xml} %{buildroot}%{_datadir}/%{name}
-
-# Install wrapper script
-install -m 755 %{SOURCE3} %{buildroot}%{_bindir}
-
-# Install desktop file
-mkdir -p %{buildroot}%{_datadir}/applications
-desktop-file-install --vendor dribble        \
-  --dir %{buildroot}%{_datadir}/applications \
-  %{SOURCE2}
-
-# Install icon
-mkdir -p %{buildroot}%{_datadir}/icons/hicolor/32x32/apps
-convert source/win32/resource/window.ico \
-  %{buildroot}%{_datadir}/icons/hicolor/32x32/apps/Nestopia.png
-
-%clean
-rm -rf %{buildroot}
-
-%post
-touch --no-create %{_datadir}/icons/hicolor
-if [ -x %{_bindir}/gtk-update-icon-cache ]; then
-  %{_bindir}/gtk-update-icon-cache --quiet %{_datadir}/icons/hicolor || :
-fi
-
-%postun
-touch --no-create %{_datadir}/icons/hicolor
-if [ -x %{_bindir}/gtk-update-icon-cache ]; then
-  %{_bindir}/gtk-update-icon-cache --quiet %{_datadir}/icons/hicolor || :
-fi
+# Validate desktop file
+desktop-file-validate \
+   $RPM_BUILD_ROOT%{_datadir}/applications/%{realname}.desktop
 
 %files
-%defattr(-,root,root)
-%{_bindir}/nst
-%{_bindir}/nestopia.sh
-%{_datadir}/%{name}
-%{_datadir}/icons/hicolor/32x32/apps/%{name}.png
-%{_datadir}/applications/dribble-%{name}.desktop
-%doc changelog.txt COPYING README.Linux readme.html
+%{_bindir}/%{realname}
+%{_datadir}/%{realname}
+%{_datadir}/pixmaps/%{realname}.svg
+%{_datadir}/applications/%{realname}.desktop
+%doc changelog.txt COPYING README.unix readme.html
 
 %changelog
+* Thu Oct 31 2013 Andrea Musuruane <musuruan@gmail.com> - 1.45-1
+- Switch to upstream by R. Danbrook
+- Added two patches from Debian
+- Updated %%description
+- Dropped desktop vendor tag for F-19+
+- Dropped obsolete Group, Buildroot, %%clean and %%defattr
+- Dropped cleaning at the beginning of %%install
+
 * Sun Mar 03 2013 Nicolas Chauvet <kwizart@gmail.com> - 1.40h-7
 - Mass rebuilt for Fedora 19 Features
 
@@ -125,7 +93,7 @@ fi
 * Thu Dec 04 2008 Andrea Musuruane <musuruan@gmail.com> 1.40h-2
 - Fixed unowned directory (BZ #216)
 
-* Sun Oct 25 2008 Andrea Musuruane <musuruan@gmail.com> 1.40h-1
+* Sun Oct 26 2008 Andrea Musuruane <musuruan@gmail.com> 1.40h-1
 - updated to 1.40 release h
 
 * Tue Jul 15 2008 Andrea Musuruane <musuruan@gmail.com> 1.40g-1
