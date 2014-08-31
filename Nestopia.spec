@@ -2,7 +2,7 @@
 
 Name: Nestopia
 Version: 1.45
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: A portable open source NES/Famicom emulator       
 
 License: GPLv2+
@@ -67,6 +67,9 @@ desktop-file-validate \
 %doc changelog.txt COPYING README.unix readme.html
 
 %changelog
+* Sun Aug 31 2014 Sérgio Basto <sergio@serjux.com> - 1.45-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_22_Mass_Rebuild
+
 * Thu Oct 31 2013 Andrea Musuruane <musuruan@gmail.com> - 1.45-1
 - Switch to upstream by R. Danbrook
 - Added two patches from Debian
