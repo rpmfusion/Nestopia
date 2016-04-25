@@ -1,0 +1,35 @@
+diff -durN nestopia-1.47.orig/Makefile nestopia-1.47/Makefile
+--- nestopia-1.47.orig/Makefile	2016-01-10 03:07:59.000000000 +0100
++++ nestopia-1.47/Makefile	2016-04-24 18:16:51.276901269 +0200
+@@ -374,7 +374,7 @@
+ 
+ # Core rules
+ objs/core/%.o: source/core/%.cpp
+-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
++	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -Isource/nes_ntsc -c $< -o $@
+ 
+ # Interface rules
+ objs/unix/%.o: source/unix/%.cpp
+diff -durN nestopia-1.47.orig/source/core/NstVideoFilterNtscCfg.cpp nestopia-1.47/source/core/NstVideoFilterNtscCfg.cpp
+--- nestopia-1.47.orig/source/core/NstVideoFilterNtscCfg.cpp	2016-01-10 03:07:11.000000000 +0100
++++ nestopia-1.47/source/core/NstVideoFilterNtscCfg.cpp	2016-04-24 17:44:04.532308362 +0200
+@@ -34,7 +34,6 @@
+ #endif
+ 
+ #define NES_NTSC_NO_BLITTERS
+-#include "../nes_ntsc/nes_ntsc.inl"
+ 
+ #ifdef _MSC_VER
+ #pragma warning( pop )
+diff -durN nestopia-1.47.orig/source/core/NstVideoFilterNtsc.hpp nestopia-1.47/source/core/NstVideoFilterNtsc.hpp
+--- nestopia-1.47.orig/source/core/NstVideoFilterNtsc.hpp	2016-01-10 03:07:11.000000000 +0100
++++ nestopia-1.47/source/core/NstVideoFilterNtsc.hpp	2016-04-24 17:44:27.816274653 +0200
+@@ -25,7 +25,7 @@
+ #ifndef NST_VIDEO_FILTER_NTSC_H
+ #define NST_VIDEO_FILTER_NTSC_H
+ 
+-#include "../nes_ntsc/nes_ntsc.h"
++#include <nes_ntsc.h>
+ 
+ #ifdef NST_PRAGMA_ONCE
+ #pragma once
