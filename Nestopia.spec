@@ -1,29 +1,32 @@
 %global realname nestopia
 
 Name: Nestopia
-Version: 1.45
-Release: 2%{?dist}
+Version: 1.47
+Release: 1%{?dist}
 Summary: A portable open source NES/Famicom emulator       
 
 License: GPLv2+
-URL: http://0ldsk00l.ca/nestopia.html
+URL: http://0ldsk00l.ca/nestopia/
 Source0: http://downloads.sourceforge.net/nestopiaue/%{version}/%{realname}-%{version}.tgz
+# Debian man page
+Source1: %{realname}.6
 # Install to FHS-compliant locations and handle DESTDIR
-Patch0: %{name}-1.45-install-location.patch
+Patch0: %{name}-1.47-install-location.patch
 # Use a format specifier with gtk_message_dialog_new
-Patch1: %{name}-1.45-format-security.patch
+Patch1: %{name}-1.47-format-security.patch
+# Preserve externally-provided build flags
+Patch2: %{name}-1.47-buildflags.patch
+# Use system zlib
+Patch3: %{name}-1.47-use-system-zlib.patch
 # Use system nes_ntsc
-Patch2: Nestopia-1.36-nesntsc.patch
+Patch4: %{name}-1.47-use-system-nes_ntsc.patch
 
 BuildRequires: gtk3-devel
-BuildRequires: SDL-devel >= 1.2.12
-BuildRequires: alsa-lib-devel
+BuildRequires: SDL2-devel
 BuildRequires: libarchive-devel
 BuildRequires: zlib-devel
-BuildRequires: mesa-libGL-devel
-BuildRequires: mesa-libGLU-devel
 BuildRequires: nes_ntsc-devel
-BuildRequires: pkgconfig
+BuildRequires: libao-devel
 BuildRequires: desktop-file-utils
 Requires: hicolor-icon-theme
 
@@ -35,38 +38,89 @@ full support for software that do mid-scanline and other timing trickery.
 
 %prep
 %setup -q -n %{realname}-%{version}
-
 %patch0 -p1
 %patch1 -p1
-%patch2 -p0
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+
+# Link system nes_ntsc lib
+sed -i 's/ -lz/ -lz -lnes_ntsc/' Makefile
 
 # Fix end-of-line encoding
 sed -i 's/\r//' changelog.txt
 
-# Clean up sources
-rm -rf dll lib source/kaillera source/unrar
+# Remove bundled libs
+rm -rf source/zlib
+rm -rf source/nes_ntsc/{*.c,*.inl,demo_impl.h,nes_ntsc.h,nes_ntsc_impl.h}
 
 %build
+# Wordaround FTBFS with GCC 6
+%global optflags %{optflags} -std=gnu++98
+
 export CFLAGS="%{optflags}"
 export CXXFLAGS="%{optflags}"
 # It does not compile with smp_mflags
 make
 
 %install
-make install DESTDIR=%{buildroot}
+export PREFIX="%{_prefix}"
+export BINDIR="%{_bindir}"
+%make_install
 
 # Validate desktop file
 desktop-file-validate \
-   $RPM_BUILD_ROOT%{_datadir}/applications/%{realname}.desktop
+   %{buildroot}%{_datadir}/applications/%{realname}.desktop
+
+# Move icon into %%{_datadir}/icons/hicolor/
+install -d %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/
+mv %{buildroot}%{_datadir}/pixmaps/%{realname}.svg \
+  %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/
+
+# Install icons
+for i in 32 48 64 96 128; do
+  install -d %{buildroot}%{_datadir}/icons/hicolor/${i}x${i}/apps
+    install -p -m 644 source/unix/icons/%{realname}${i}.png \
+      %{buildroot}%{_datadir}/icons/hicolor/${i}x${i}/apps/%{realname}.png
+done
+
+# Install man page
+install -d %{buildroot}%{_mandir}/man6
+install -p -m 0644 %{SOURCE1} %{buildroot}%{_mandir}/man6/
+
+
+%post
+/bin/touch --no-create %{_datadir}/icons/hicolor &>/dev/null || :
+
+
+%postun
+if [ $1 -eq 0 ] ; then
+    /bin/touch --no-create %{_datadir}/icons/hicolor &>/dev/null
+    /usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
+fi
+
+
+%posttrans
+/usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
+
 
 %files
 %{_bindir}/%{realname}
 %{_datadir}/%{realname}
-%{_datadir}/pixmaps/%{realname}.svg
+%{_datadir}/icons/hicolor/*/apps/*
 %{_datadir}/applications/%{realname}.desktop
-%doc changelog.txt COPYING README.unix readme.html
+%{_mandir}/man6/*
+%license COPYING
+%doc AUTHORS changelog.txt README.md README.unix readme.html
 
 %changelog
+* Sun Apr 24 2016 Andrea Musuruane <musuruan@gmail.com> - 1.47-1
+- Updated to new upstream release
+- Updated URL
+- Added Debian man page
+- Updated Debian patches
+- Moved icons in %%{_datadir}/icons/hicolor
+
 * Sun Aug 31 2014 Sérgio Basto <sergio@serjux.com> - 1.45-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_22_Mass_Rebuild
 
