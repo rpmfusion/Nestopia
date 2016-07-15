@@ -1,34 +1,13 @@
 Description: Install to FHS-compliant locations and handle DESTDIR
 Author: Stephen Kitt <skitt@debian.org>
 
---- nestopia.orig/Makefile
-+++ nestopia/Makefile
-@@ -4,8 +4,8 @@
- # By R. Danbrook 2012
- #
- 
--CC   = @gcc
--CXX  = @g++
-+CC   = gcc
-+CXX  = g++
- CFLAGS ?= -O3 -g3
- CXXFLAGS ?= -O3 -g3
- CPPFLAGS += -DNST_PRAGMA_ONCE_SUPPORT -D_SZ_ONE_DIRECTORY
-@@ -36,8 +36,8 @@
- 	CPPFLAGS += -DBSD
- endif
- 
--PREFIX = /usr/local
--BINDIR = $(PREFIX)/bin
-+PREFIX = /usr
-+BINDIR = $(PREFIX)/bin
- DATADIR = $(PREFIX)/share/nestopia
- 
- # OpenGL Support
-@@ -190,15 +190,16 @@
- 	$(CC) $(CFLAGS) $(LDFLAGS) -o $(BIN) $^ $(LIBS)
+--- a/Makefile
++++ b/Makefile
+@@ -395,16 +395,16 @@
+ 	$(CC) $(LDFLAGS) $^ $(LIBS) -o $(BIN)
  
  install:
+-	mkdir -p $(BINDIR)
 -	mkdir -p $(DATADIR)/icons
 -	mkdir -p $(PREFIX)/share/pixmaps
 -	install -m 0755 $(BIN) $(BINDIR)
