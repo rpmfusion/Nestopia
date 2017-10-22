@@ -1,35 +1,32 @@
 %global realname nestopia
 
 Name: Nestopia
-Version: 1.47
-Release: 3%{?dist}
+Version: 1.48
+Release: 1%{?dist}
 Summary: A portable open source NES/Famicom emulator       
 
 License: GPLv2+
 URL: http://0ldsk00l.ca/nestopia/
-Source0: http://downloads.sourceforge.net/nestopiaue/%{version}/%{realname}-%{version}.tgz
+Source0: https://github.com/rdanbrook/%{realname}/archive/%{version}/%{realname}-%{version}.tar.gz
 # Debian man page
 Source1: %{realname}.6
-# Install to FHS-compliant locations and handle DESTDIR
-Patch0: %{name}-1.47-install-location.patch
-# Use a format specifier with gtk_message_dialog_new
-Patch1: %{name}-1.47-format-security.patch
-# Preserve externally-provided build flags
-Patch2: %{name}-1.47-buildflags.patch
-# Use system zlib
-Patch3: %{name}-1.47-use-system-zlib.patch
+# AppData from Debian
+Source2: %{realname}.appdata.xml
 # Use system nes_ntsc
-Patch4: %{name}-1.47-use-system-nes_ntsc.patch
+Patch0: %{name}-1.48-use-system-nes_ntsc.patch
 
+BuildRequires: autoconf
+BuildRequires: autoconf-archive
+BuildRequires: automake
 BuildRequires: gtk3-devel
 BuildRequires: SDL2-devel
 BuildRequires: libarchive-devel
 BuildRequires: zlib-devel
-BuildRequires: mesa-libGL-devel
-BuildRequires: mesa-libGLU-devel
+BuildRequires: libepoxy-devel
 BuildRequires: nes_ntsc-devel
 BuildRequires: libao-devel
 BuildRequires: desktop-file-utils
+BuildRequires: libappstream-glib
 Requires: hicolor-icon-theme
 
 %description
@@ -41,54 +38,38 @@ full support for software that do mid-scanline and other timing trickery.
 %prep
 %setup -q -n %{realname}-%{version}
 %patch0 -p1
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
-
-# Link system nes_ntsc lib
-sed -i 's/ -lz/ -lz -lnes_ntsc/' Makefile
 
 # Fix end-of-line encoding
-sed -i 's/\r//' changelog.txt
+sed -i 's/\r//' ChangeLog
 
 # Remove bundled libs
-rm -rf source/zlib
-rm -rf source/nes_ntsc/{*.c,*.inl,demo_impl.h,nes_ntsc.h,nes_ntsc_impl.h}
+find source/nes_ntsc/ -type f -not -name "nes_ntsc_config.h" -delete
+
 
 %build
-# Wordaround FTBFS with GCC 6
-%global optflags %{optflags} -std=gnu++98
+autoreconf -fvi
+%configure --disable-silent-rules
+%make_build
 
-export CFLAGS="%{optflags}"
-export CXXFLAGS="%{optflags}"
-# It does not compile with smp_mflags
-make
 
 %install
-export PREFIX="%{_prefix}"
-export BINDIR="%{_bindir}"
 %make_install
+
+# Move docs to %%{_pkgdocdir}
+mv %{buildroot}%{_docdir}/%{realname} %{buildroot}%{_pkgdocdir}
 
 # Validate desktop file
 desktop-file-validate \
    %{buildroot}%{_datadir}/applications/%{realname}.desktop
 
-# Move icon into %%{_datadir}/icons/hicolor/
-install -d %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/
-mv %{buildroot}%{_datadir}/pixmaps/%{realname}.svg \
-  %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/
-
-# Install icons
-for i in 32 48 64 96 128; do
-  install -d %{buildroot}%{_datadir}/icons/hicolor/${i}x${i}/apps
-    install -p -m 644 source/unix/icons/%{realname}${i}.png \
-      %{buildroot}%{_datadir}/icons/hicolor/${i}x${i}/apps/%{realname}.png
-done
-
 # Install man page
 install -d %{buildroot}%{_mandir}/man6
-install -p -m 0644 %{SOURCE1} %{buildroot}%{_mandir}/man6/
+install -p -m 644 %{SOURCE1} %{buildroot}%{_mandir}/man6/
+
+# Install AppData file
+install -d %{buildroot}%{_datadir}/appdata
+install -p -m 644 %{SOURCE2} %{buildroot}%{_datadir}/appdata
+appstream-util validate-relax --nonet %{buildroot}%{_datadir}/appdata/*.appdata.xml
 
 
 %post
@@ -110,12 +91,17 @@ fi
 %{_bindir}/%{realname}
 %{_datadir}/%{realname}
 %{_datadir}/icons/hicolor/*/apps/*
+%{_datadir}/appdata/%{realname}.appdata.xml
 %{_datadir}/applications/%{realname}.desktop
 %{_mandir}/man6/*
 %license COPYING
-%doc AUTHORS changelog.txt README.md README.unix readme.html
+%doc %{_pkgdocdir}
 
 %changelog
+* Sat Oct 21 2017 Andrea Musuruane <musuruan@gmail.com> - 1.48-1
+- Updated to new upstream release
+- Added AppData from Debian
+
 * Thu Aug 31 2017 RPM Fusion Release Engineering <kwizart@rpmfusion.org> - 1.47-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Mass_Rebuild
 

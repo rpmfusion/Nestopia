@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop">
+  <id>nestopia.desktop</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-2.0+</project_license>
+  <name>Nestopia</name>
+  <summary>Accurate NES emulator</summary>
+  <description>
+    <p>Nestopia is a cycle-accurate NES/Famicom emulator.
+       It has a high compatibility rate and support for
+       many peripherals and input devices.</p>
+    <p>Features:</p>
+    <ul>
+      <li>Save states</li>
+      <li>Movie recording</li>
+      <li>Game rewinding</li>
+      <li>GUI or command line interface</li>
+      <li>Emulation of NTSC, PAL, and Dendy systems</li>
+      <li>Support for NES Zapper games</li>
+      <li>Support for Famicom Disk System games</li>
+    </ul>
+  </description>
+  <url type="homepage">http://0ldsk00l.ca/nestopia/</url>
+  <url type="bugtracker">https://github.com/rdanbrook/nestopia/issues</url>
+</component>
