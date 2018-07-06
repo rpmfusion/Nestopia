@@ -1,8 +1,8 @@
 %global realname nestopia
 
 Name: Nestopia
-Version: 1.48
-Release: 2%{?dist}
+Version: 1.49
+Release: 1%{?dist}
 Summary: A portable open source NES/Famicom emulator       
 
 License: GPLv2+
@@ -13,8 +13,9 @@ Source1: %{realname}.6
 # AppData from Debian
 Source2: %{realname}.appdata.xml
 # Use system nes_ntsc
-Patch0: %{name}-1.48-use-system-nes_ntsc.patch
+Patch0: %{name}-1.49-use-system-nes_ntsc.patch
 
+BuildRequires: gcc-c++
 BuildRequires: autoconf
 BuildRequires: autoconf-archive
 BuildRequires: automake
@@ -48,7 +49,10 @@ find source/nes_ntsc/ -type f -not -name "nes_ntsc_config.h" -delete
 
 %build
 autoreconf -fvi
-%configure --disable-silent-rules
+%configure \
+  --enable-gui \
+  --with-ao \
+  --disable-silent-rules
 %make_build
 
 
@@ -67,37 +71,28 @@ install -d %{buildroot}%{_mandir}/man6
 install -p -m 644 %{SOURCE1} %{buildroot}%{_mandir}/man6/
 
 # Install AppData file
-install -d %{buildroot}%{_datadir}/appdata
-install -p -m 644 %{SOURCE2} %{buildroot}%{_datadir}/appdata
-appstream-util validate-relax --nonet %{buildroot}%{_datadir}/appdata/*.appdata.xml
-
-
-%post
-/bin/touch --no-create %{_datadir}/icons/hicolor &>/dev/null || :
-
-
-%postun
-if [ $1 -eq 0 ] ; then
-    /bin/touch --no-create %{_datadir}/icons/hicolor &>/dev/null
-    /usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
-fi
-
-
-%posttrans
-/usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
+install -d %{buildroot}%{_datadir}/metainfo
+install -p -m 644 %{SOURCE2} %{buildroot}%{_datadir}/metainfo
+appstream-util validate-relax --nonet %{buildroot}%{_datadir}/metainfo/*.appdata.xml
 
 
 %files
 %{_bindir}/%{realname}
 %{_datadir}/%{realname}
 %{_datadir}/icons/hicolor/*/apps/*
-%{_datadir}/appdata/%{realname}.appdata.xml
 %{_datadir}/applications/%{realname}.desktop
+%{_datadir}/metainfo/%{realname}.appdata.xml
 %{_mandir}/man6/*
 %license COPYING
 %doc %{_pkgdocdir}
 
 %changelog
+* Wed Jun 27 2018 Andrea Musuruane <musuruan@gmail.com> - 1.49-1
+- Updated to new upstream release
+- Added gcc-c++ dependency
+- Used new AppData directory
+- Removed obsolete scriptlets
+
 * Wed Feb 28 2018 RPM Fusion Release Engineering <kwizart@rpmfusion.org> - 1.48-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
 
