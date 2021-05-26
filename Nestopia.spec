@@ -1,31 +1,30 @@
 %global realname nestopia
 
 Name: Nestopia
-Version: 1.50
-Release: 4%{?dist}
+Version: 1.51.0
+Release: 1%{?dist}
 Summary: A portable open source NES/Famicom emulator       
 
 License: GPLv2+
 URL: http://0ldsk00l.ca/nestopia/
-Source0: https://github.com/rdanbrook/%{realname}/archive/%{version}/%{realname}-%{version}.tar.gz
+Source0: https://github.com/0ldsk00l/%{realname}/archive/%{version}.tar.gz#/%{realname}-%{version}.tar.gz
 # Debian man page
 Source1: %{realname}.6
 # AppData from Debian
 Source2: %{realname}.appdata.xml
 # Use system nes_ntsc
-Patch0: %{name}-1.49-use-system-nes_ntsc.patch
+Patch0: %{name}-1.51.0-use-system-nes_ntsc.patch
 
 BuildRequires: gcc-c++
 BuildRequires: autoconf
 BuildRequires: autoconf-archive
 BuildRequires: automake
-BuildRequires: gtk3-devel
+BuildRequires: fltk-devel
 BuildRequires: SDL2-devel
 BuildRequires: libarchive-devel
 BuildRequires: zlib-devel
 BuildRequires: libepoxy-devel
 BuildRequires: nes_ntsc-devel
-BuildRequires: libao-devel
 BuildRequires: desktop-file-utils
 BuildRequires: libappstream-glib
 Requires: hicolor-icon-theme
@@ -50,8 +49,6 @@ find source/nes_ntsc/ -type f -not -name "nes_ntsc_config.h" -delete
 %build
 autoreconf -fvi
 %configure \
-  --enable-gui \
-  --with-ao \
   --disable-silent-rules
 %make_build
 
@@ -87,6 +84,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_datadir}/metainfo/*.appdata
 %doc %{_pkgdocdir}
 
 %changelog
+* Mon May 24 2021 Andrea Musuruane <musuruan@gmail.com> - 1.51.0-1
+- Updated to new upstream release
+
 * Tue Feb 02 2021 RPM Fusion Release Engineering <leigh123linux@gmail.com> - 1.50-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_34_Mass_Rebuild
 
