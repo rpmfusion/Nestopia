@@ -1,8 +1,8 @@
 %global realname nestopia
 
 Name: Nestopia
-Version: 1.51.1
-Release: 3%{?dist}
+Version: 1.52.0
+Release: 1%{?dist}
 Summary: A portable open source NES/Famicom emulator       
 
 License: GPLv2+
@@ -13,7 +13,7 @@ Source1: %{realname}.6
 # AppData from Debian
 Source2: %{realname}.appdata.xml
 # Use system nes_ntsc
-Patch0: %{name}-1.51.0-use-system-nes_ntsc.patch
+Patch0: %{name}-1.52.0-use-system-nes_ntsc.patch
 
 BuildRequires: gcc-c++
 BuildRequires: autoconf
@@ -84,6 +84,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_datadir}/metainfo/*.appdata
 %doc %{_pkgdocdir}
 
 %changelog
+* Fri Dec 30 2022 Andrea Musuruane <musuruan@gmail.com> - 1.52.0-1
+- Updated to new upstream release
+
 * Sat Aug 06 2022 RPM Fusion Release Engineering <sergiomb@rpmfusion.org> - 1.51.1-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_37_Mass_Rebuild and ffmpeg
   5.1
