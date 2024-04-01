@@ -1,8 +1,8 @@
 %global realname nestopia
 
 Name: Nestopia
-Version: 1.52.0
-Release: 3%{?dist}
+Version: 1.52.1
+Release: 1%{?dist}
 Summary: A portable open source NES/Famicom emulator       
 
 License: GPLv2+
@@ -37,7 +37,7 @@ full support for software that do mid-scanline and other timing trickery.
 
 %prep
 %setup -q -n %{realname}-%{version}
-%patch0 -p1
+%patch 0 -p1
 
 # Fix end-of-line encoding
 sed -i 's/\r//' ChangeLog
@@ -84,6 +84,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_datadir}/metainfo/*.appdata
 %doc %{_pkgdocdir}
 
 %changelog
+* Sat Mar 30 2024 Andrea Musuruane <musuruan@gmail.com> - 1.52.1-1
+- Updated to new upstream release
+
 * Sat Feb 03 2024 RPM Fusion Release Engineering <sergiomb@rpmfusion.org> - 1.52.0-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_40_Mass_Rebuild
 
