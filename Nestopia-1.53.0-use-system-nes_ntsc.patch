@@ -1,0 +1,42 @@
+diff -durN a/Makefile.am b/Makefile.am
+--- a/Makefile.am	2024-12-24 01:01:10.000000000 +0000
++++ b/Makefile.am	2025-03-19 23:27:33.594040257 +0000
+@@ -8,6 +8,7 @@
+ nestopia_CPPFLAGS = \
+ 	-I$(top_srcdir)/source \
+ 	-I$(top_srcdir)/source/fltkui \
++	-I$(top_srcdir)/source/nes_ntsc \
+ 	-DNST_DATADIR=\"$(datadir)/nestopia\" \
+ 	-DNST_DATAROOTDIR=\"$(datarootdir)\" \
+ 	-DNST_PRAGMA_ONCE
+@@ -20,6 +21,7 @@
+ 	$(FLTK_CFLAGS)
+ nestopia_LDADD = \
+ 	$(ZLIB_LIBS) \
++	-lnes_ntsc \
+ 	$(LIBARCHIVE_LIBS) \
+ 	$(SAMPLERATE_LIBS) \
+ 	$(SDL2_LIBS) \
+diff -durN a/source/core/NstVideoFilterNtscCfg.cpp b/source/core/NstVideoFilterNtscCfg.cpp
+--- a/source/core/NstVideoFilterNtscCfg.cpp	2024-12-24 01:01:10.000000000 +0000
++++ b/source/core/NstVideoFilterNtscCfg.cpp	2025-03-19 23:29:45.715399057 +0000
+@@ -34,7 +34,6 @@
+ #endif
+ 
+ #define NES_NTSC_NO_BLITTERS
+-#include "../nes_ntsc/nes_ntsc.inl"
+ 
+ #ifdef _MSC_VER
+ #pragma warning( pop )
+diff -durN a/source/core/NstVideoFilterNtsc.hpp b/source/core/NstVideoFilterNtsc.hpp
+--- a/source/core/NstVideoFilterNtsc.hpp	2024-12-24 01:01:10.000000000 +0000
++++ b/source/core/NstVideoFilterNtsc.hpp	2025-03-19 23:30:19.728006293 +0000
+@@ -25,7 +25,7 @@
+ #ifndef NST_VIDEO_FILTER_NTSC_H
+ #define NST_VIDEO_FILTER_NTSC_H
+ 
+-#include "../nes_ntsc/nes_ntsc.h"
++#include <nes_ntsc.h>
+ 
+ #ifdef NST_PRAGMA_ONCE
+ #pragma once
