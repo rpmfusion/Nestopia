@@ -2,7 +2,7 @@
 
 Name: Nestopia
 Version: 1.53.0
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: A portable open source NES/Famicom emulator       
 
 License: GPLv2+
@@ -85,6 +85,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_datadir}/metainfo/*.appdata
 %doc %{_pkgdocdir}
 
 %changelog
+* Sat Jul 26 2025 RPM Fusion Release Engineering <sergiomb@rpmfusion.org> - 1.53.0-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_43_Mass_Rebuild
+
 * Wed Mar 19 2025 Leigh Scott <leigh123linux@gmail.com> - 1.53.0-1
 - Update to 1.53.0
 
