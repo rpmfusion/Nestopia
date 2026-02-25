@@ -1,8 +1,8 @@
 %global realname nestopia
 
 Name: Nestopia
-Version: 1.53.0
-Release: 3%{?dist}
+Version: 1.53.2
+Release: 1%{?dist}
 Summary: A portable open source NES/Famicom emulator       
 
 License: GPLv2+
@@ -13,13 +13,13 @@ Source1: %{realname}.6
 # AppData from Debian
 Source2: %{realname}.appdata.xml
 # Use system nes_ntsc
-Patch0: %{name}-1.53.0-use-system-nes_ntsc.patch
+Patch0: %{name}-1.53.2-use-system-nes_ntsc.patch
 
 BuildRequires: gcc-c++
 BuildRequires: autoconf
 BuildRequires: autoconf-archive
 BuildRequires: automake
-BuildRequires: fltk-devel
+BuildRequires: fltk-devel >= 1.4
 BuildRequires: SDL2-devel
 BuildRequires: libarchive-devel
 BuildRequires: libsamplerate-devel
@@ -85,6 +85,10 @@ appstream-util validate-relax --nonet %{buildroot}%{_datadir}/metainfo/*.appdata
 %doc %{_pkgdocdir}
 
 %changelog
+* Wed Feb 25 2026 Andrea Musuruane <musuruan@gmail.com> - 1.53.2-1
+- Update to 1.53.2
+- Built for fltk 1.4 which explicitly supports Wayland
+
 * Mon Feb 02 2026 RPM Fusion Release Engineering <sergiomb@rpmfusion.org> - 1.53.0-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_44_Mass_Rebuild
 

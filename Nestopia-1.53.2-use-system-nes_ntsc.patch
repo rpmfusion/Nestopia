@@ -1,0 +1,42 @@
+diff -durN nestopia-1.53.2.orig/Makefile.am nestopia-1.53.2/Makefile.am
+--- nestopia-1.53.2.orig/Makefile.am	2025-08-09 23:58:52.000000000 +0200
++++ nestopia-1.53.2/Makefile.am	2026-02-25 09:30:35.456786020 +0100
+@@ -8,6 +8,7 @@
+ nestopia_CPPFLAGS = \
+ 	-I$(top_srcdir)/source \
+ 	-I$(top_srcdir)/source/fltkui \
++	-I$(top_srcdir)/source/nes_ntsc \
+ 	-DNST_DATADIR=\"$(datadir)/nestopia\" \
+ 	-DNST_DATAROOTDIR=\"$(datarootdir)\" \
+ 	-DNST_PRAGMA_ONCE \
+@@ -24,6 +25,7 @@
+ 	$(FLTK_CFLAGS)
+ nestopia_LDADD = \
+ 	$(ZLIB_LIBS) \
++	-lnes_ntsc \
+ 	$(LIBARCHIVE_LIBS) \
+ 	$(SAMPLERATE_LIBS) \
+ 	$(SDL2_LIBS) \
+diff -durN nestopia-1.53.2.orig/source/core/NstVideoFilterNtscCfg.cpp nestopia-1.53.2/source/core/NstVideoFilterNtscCfg.cpp
+--- nestopia-1.53.2.orig/source/core/NstVideoFilterNtscCfg.cpp	2025-08-09 23:58:52.000000000 +0200
++++ nestopia-1.53.2/source/core/NstVideoFilterNtscCfg.cpp	2026-02-25 09:30:35.457107591 +0100
+@@ -34,7 +34,6 @@
+ #endif
+ 
+ #define NES_NTSC_NO_BLITTERS
+-#include "../nes_ntsc/nes_ntsc.inl"
+ 
+ #ifdef _MSC_VER
+ #pragma warning( pop )
+diff -durN nestopia-1.53.2.orig/source/core/NstVideoFilterNtsc.hpp nestopia-1.53.2/source/core/NstVideoFilterNtsc.hpp
+--- nestopia-1.53.2.orig/source/core/NstVideoFilterNtsc.hpp	2025-08-09 23:58:52.000000000 +0200
++++ nestopia-1.53.2/source/core/NstVideoFilterNtsc.hpp	2026-02-25 09:30:35.457303206 +0100
+@@ -25,7 +25,7 @@
+ #ifndef NST_VIDEO_FILTER_NTSC_H
+ #define NST_VIDEO_FILTER_NTSC_H
+ 
+-#include "../nes_ntsc/nes_ntsc.h"
++#include <nes_ntsc.h>
+ 
+ #ifdef NST_PRAGMA_ONCE
+ #pragma once
